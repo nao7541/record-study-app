@@ -18,8 +18,8 @@ jobs:
       - name: Build project
         run: npm run build
         env:
-        REACT_APP_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        REACT_APP_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          REACT_APP_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          REACT_APP_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
