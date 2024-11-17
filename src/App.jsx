@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import supabase from "./supabaseClient";
 
 const App = () => {
-  const [records, setRecords] = useState([
-    { title: "勉強の記録1", time: 1},
-    { title: "勉強の記録2", time: 2},
-    { title: "勉強の記録3", time: 3}
-  ]);
 
+  const [records, setRecords] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [studyContent, setStudyContent] = useState("");
   const [studyTime, setStudyTime] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
@@ -17,6 +15,24 @@ const App = () => {
     setTotalTime(newTotalTime);
   }, [records]);
 
+  const fetchRecords = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.from("study-record").select("*");
+      if (error) {
+        console.error("エラーが発生しました", error.message);
+      } 
+      setRecords(data);
+    } catch (error) {
+        return;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRecords();
+  }, [fetchRecords]);
+
   const onChangeStudyContent = (event) => {
     setStudyContent(event.target.value);
   }
@@ -25,34 +41,55 @@ const App = () => {
     setStudyTime(event.target.value);
   }
 
-  const onClickAdd = () => {
+  const onClickAdd = async () => {
     if (studyContent === "" || Number(studyTime) === 0) {
       setInputError(true);
       return;
     }
     const newRecords = { title: studyContent, time: Number(studyTime) };
-    setRecords([...records, newRecords]);
+    const { error } = await supabase.from("study-record").insert(newRecords);
+    if (error) {
+      console.error("エラーが発生しました", error.message);
+      return;
+    }
     setStudyContent("");
     setStudyTime(0);
     setInputError(false);
+    fetchRecords();
+  }
+
+  const onClickDelete = async (id) => {
+    const { error } = await supabase.from("study-record").delete().eq("id", id);
+    if (error) {
+      console.error("エラーが発生しました", error.message);
+      return;
+    }
+    fetchRecords();
   }
 
   return (
     <>
       <h1>学習記録一覧</h1>
+      {isLoading && <p>Loading...</p>}
       <ul>
-        {records.map((records) => (
-            <li key={records.title}>
-              <p>{records.title}: {records.time}h</p>
+        {records.map((record) => (
+            <li key={record.id} style={{ display: "flex", alignItems: "center" }}>
+              <p>{record.title}: {record.time}h</p>
+              <button onClick={() => onClickDelete(record.id)}>削除</button>
             </li>
           )
         )}
       </ul>
-      <p>学習内容</p>
-      <input type="text" value={studyContent} onChange={onChangeStudyContent} />
-      <p>学習時間</p>
-      <input type="number" value={studyTime} onChange={onChangeStudyTime} />
-
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <p>学習内容</p>
+        <input type="text" value={studyContent} onChange={onChangeStudyContent} />
+      </div>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <p>学習時間</p>
+        <input type="number" value={studyTime} onChange={onChangeStudyTime} />
+        <p>時間</p>
+      </div>
+      
       <p>入力されている学習内容: {studyContent}</p>
       <p>入力されている時間: {studyTime}時間</p>
       <button onClick={onClickAdd}>登録</button>
