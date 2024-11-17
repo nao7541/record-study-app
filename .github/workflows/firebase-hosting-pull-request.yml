@@ -18,13 +18,13 @@ jobs:
         run: npm ci
       
       - name: Build project
-      - run: npm run build
+        run: npm run build
         env:
         REACT_APP_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         REACT_APP_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       
       - name: Deploy to Firebase Hosting
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECORD_STUDY_APP }}
