@@ -73,27 +73,27 @@ const App = () => {
       {isLoading && <p>Loading...</p>}
       <ul>
         {records.map((record) => (
-            <li key={record.id} style={{ display: "flex", alignItems: "center" }}>
-              <p>{record.title}: {record.time}h</p>
-              <button onClick={() => onClickDelete(record.id)}>削除</button>
+            <li data-testid="studyRecord" key={record.id} style={{ display: "flex", alignItems: "center" }}>
+              <p data-testid="studyData">{record.title}: {record.time}h</p>
+              <button data-testid="deleteStudyData" onClick={() => onClickDelete(record.id)}>削除</button>
             </li>
           )
         )}
       </ul>
       <div style={{ display: "flex", alignItems: "center" }}>
-        <p>学習内容</p>
-        <input type="text" value={studyContent} onChange={onChangeStudyContent} />
+        <label htmlFor="studyContent">学習内容</label>
+        <input id="studyContent" data-testid="studyContent" type="text" value={studyContent} onChange={onChangeStudyContent} />
       </div>
       <div style={{ display: "flex", alignItems: "center" }}>
-        <p>学習時間</p>
-        <input type="number" value={studyTime} onChange={onChangeStudyTime} />
+        <label htmlFor="studyTime">学習時間</label>
+        <input id="studyTime" data-testid="studyTime" type="number" value={studyTime} onChange={onChangeStudyTime} />
         <p>時間</p>
       </div>
       
       <p>入力されている学習内容: {studyContent}</p>
       <p>入力されている時間: {studyTime}時間</p>
-      <button onClick={onClickAdd}>登録</button>
-      {inputError && <p style={{ color: "red" }}>入力されていない項目があります</p>}
+      <button data-testid="addStudyData" onClick={onClickAdd}>登録</button>
+      {inputError && <p data-testid="inputDataIsNull" style={{ color: "red" }}>入力されていない項目があります</p>}
       <p>合計時間：{totalTime}(h)</p>
     </>
   );
