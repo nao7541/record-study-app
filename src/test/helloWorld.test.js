@@ -99,8 +99,11 @@ describe('button test', () => {
     fireEvent.click(addButton);
 
     // データが登録されたことを確認
-    const addedRecord = await screen.findByText('Sample-test: 999h');
-    expect(addedRecord).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Sample-test: 999h')).toBeInTheDocument();
+    });
+    // const addedRecord = await screen.findByText('Sample-test: 999h');
+    // expect(addedRecord).toBeInTheDocument();
 
     const listRecords = screen.getAllByTestId('studyRecord');
     const testRecord = listRecords.find(record => within(record).queryByText('Sample-test: 999h'));
